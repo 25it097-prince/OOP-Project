@@ -61,7 +61,7 @@ public class MiniBank {
 
         System.out.println("\n===== ACCOUNT STATEMENT =====");
 
-        Account account = new Account("Prince", 5000);
+        Account account = new SavingsAccount("Prince" , 5000,1000);
 
         System.out.println(
                 StatementFormatter.buildStatement(account)
@@ -89,6 +89,35 @@ public class MiniBank {
             System.out.println(message);
 
         } while (choice != 5);
+
+        System.out.println("\n===== PRACTICAL 5 =====");
+
+        Account[] accounts = {
+                new SavingsAccount("Prince", 10000, 2000),
+                new CurrentAccount("Rahul", 5000, 3000),
+                new FixedDepositAccount("Amit", 20000)
+        };
+
+        for (Account acc : accounts) {
+            System.out.println("\nAccount Number: " + acc.getAccountNumber());
+            System.out.println("Owner: " + acc.getOwnerName());
+            System.out.println("Interest Rate: " + acc.interestRate() + "%");
+        }
+
+        System.out.println("\n===== INSTANCEOF TEST =====");
+
+        for (Account acc : accounts) {
+            if (acc instanceof SavingsAccount savings) {
+                System.out.println("Savings Account detected.");
+                System.out.println("Balance: " + savings.getBalance());
+            }
+        }
+
+        System.out.println("\n===== WITHDRAWAL TEST =====");
+
+        accounts[0].withdraw(3000);
+        accounts[1].withdraw(7000);
+        accounts[2].withdraw(1000);
 
         System.out.println("\nThank you for using MiniBank. Goodbye!");
 

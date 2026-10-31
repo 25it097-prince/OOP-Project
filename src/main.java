@@ -13,7 +13,7 @@ public class main {
 
             System.out.print("Enter opening balance: ");
             long balance = sc.nextLong();
-            sc.nextLine(); // consume newline
+            sc.nextLine();
 
             ac[i] = new Account(name, balance);
         }
