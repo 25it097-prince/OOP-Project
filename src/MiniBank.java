@@ -21,39 +21,51 @@ public class MiniBank {
         System.out.println("----------" + bank.branch() + "----------");
 
         int choice;
-    
-Account a1 = new Account("Prince", 5000);
-Account a2 = new Account("Parth", 3000);
 
-System.out.println("\nAccount Details:");
-System.out.println(a1);
-System.out.println(a2);
+        System.out.println("\n===== VALIDATOR TESTING =====");
 
-System.out.println("\nAccount Comparison:");
-System.out.println(a1.equals(a2));
+        System.out.println("Valid Mobile: " +
+                Validator.isValidMobile("9876543210"));
 
-System.out.println("\nType Checking:");
-System.out.println(a1 instanceof Account);
+        System.out.println("Invalid Mobile: " +
+                Validator.isValidMobile("12345"));
 
-Customer.Address address =
-    new Customer.Address("Street 1", "Vadodara", "390001");
+        System.out.println("Valid Email: " +
+                Validator.isValidEmail("prince@gmail.com"));
 
-Customer c1 = new Customer(
-    "Prince", "prince@gmail.com", "9876543210", address
-);
+        System.out.println("Invalid Email: " +
+                Validator.isValidEmail("prince@"));
 
-Customer c2 = c1.clone();
+        System.out.println("Valid PAN: " +
+                Validator.isValidPan("ABCDE1234F"));
 
-System.out.println("\nCustomer Details:");
-System.out.println("Customer ID: " + c1.getCustomerId());
-System.out.println("Name: " + c1.getName());
-System.out.println("City: " + c1.getAddress().getCity());
+        System.out.println("Invalid PAN: " +
+                Validator.isValidPan("ABC123"));
 
-System.out.println("\nCloned Customer:");
-System.out.println("Customer ID: " + c2.getCustomerId());
-System.out.println("Name: " + c2.getName());
+        System.out.println("Valid IFSC: " +
+                Validator.isValidIfsc("SBIN0001234"));
 
-System.out.println("Same Object: " + (c1 == c2));
+        System.out.println("Invalid IFSC: " +
+                Validator.isValidIfsc("SBIN123"));
+
+        System.out.println("\n===== COMMAND PARSER TESTING =====");
+
+        Command command = CommandParser.parse("DEPOSIT AC0001 500");
+
+        System.out.println("Transaction Type: " + command.type());
+
+        System.out.println("Account Number: " +
+                command.accountNumber());
+
+        System.out.println("Amount: " + command.amount());
+
+        System.out.println("\n===== ACCOUNT STATEMENT =====");
+
+        Account account = new Account("Prince", 5000);
+
+        System.out.println(
+                StatementFormatter.buildStatement(account)
+        );
 
         do {
             System.out.println("\n===== MiniBank Menu =====");
