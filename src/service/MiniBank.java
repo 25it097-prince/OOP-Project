@@ -8,7 +8,7 @@ import exception.BankException;
 import model.Account;
 import model.SavingsAccount;
 import service.AccountWorker;
-import model.Account;
+import service.AccountStore;
 import model.SavingsAccount;
 import exception.BankException;
 import exception.InsufficientFundsException;
@@ -389,6 +389,66 @@ public class MiniBank {
         System.out.println("\n===== DAILY REPORT =====");
 
         ReportGenerator.generate(logsFolder, reportFile);
+
+
+// Practical 12: Collections Framework
+
+        System.out.println("\n===== PRACTICAL 12 =====");
+
+// Create AccountStore
+        AccountStore store = new AccountStore();
+
+// Create accounts
+        Account account1 =
+                new SavingsAccount("Prince", 15000, 2000);
+
+        Account account2 =
+                new SavingsAccount("Parth", 5000, 2000);
+
+        Account account3 =
+                new SavingsAccount("Yug", 10000, 2000);
+
+// Add accounts to HashMap
+        store.add(account1);
+        store.add(account2);
+        store.add(account3);
+
+// Add transaction history
+        store.addTransaction("DEPOSIT,ACC001,1000");
+        store.addTransaction("WITHDRAWAL,ACC002,500");
+
+// Display all accounts
+        System.out.println("\n===== ALL ACCOUNTS =====");
+
+        for (Account account : store.getAll()) {
+            System.out.println(account);
+        }
+
+// Search account
+        System.out.println("\n===== SEARCH ACCOUNT =====");
+
+        Account found = store.get(account1.getAccountNumber());
+
+        if (found != null) {
+            System.out.println("Account found: " + found);
+        }
+
+// Display transaction history
+        System.out.println("\n===== TRANSACTION HISTORY =====");
+
+        for (String transaction : store.getTransactionHistory()) {
+            System.out.println(transaction);
+        }
+
+// Display accounts sorted by balance
+        System.out.println("\n===== ACCOUNTS SORTED BY BALANCE =====");
+
+        for (Account account : store.sortedByBalance()) {
+            System.out.println(
+                    account.getOwnerName() + " - Rs. " + account.getBalance()
+            );
+        }
+
 
         sc.close();
 
