@@ -2,6 +2,9 @@ package service;
 
 import model.*;
 import util.*;
+import exception.BankException;
+import model.Account;
+import model.SavingsAccount;
 import service.AccountWorker;
 import model.Account;
 import model.SavingsAccount;
@@ -174,6 +177,137 @@ public class MiniBank {
 
         System.out.println("Actual Balance: Rs. " +
                 sharedAccount.getBalance());
+
+
+// Practical 10: Transaction Processing
+
+        System.out.println("\n===== Practical 10: Transaction Processing =====");
+
+// Create a shared account
+        Account transactionAccount =
+                new SavingsAccount("Prince", 100000, 2000);
+
+// Create transaction processor
+        TransactionProcessor processor = new TransactionProcessor();
+
+// Submit deposit tasks
+        for (int i = 1; i <= 5; i++) {
+
+            final int taskNumber = i;
+
+            processor.submit(() -> {
+
+                try {
+                    System.out.println(
+                            Thread.currentThread().getName()
+                                    + " performing deposit task " + taskNumber
+                    );
+
+                    transactionAccount.deposit(1000);
+
+                } catch (Exception e) {
+                    System.out.println("Deposit failed: " + e.getMessage());
+                }
+            });
+        }
+
+// Submit withdrawal tasks
+        for (int i = 1; i <= 5; i++) {
+
+            final int taskNumber = i;
+
+            processor.submit(() -> {
+
+                try {
+                    System.out.println(
+                            Thread.currentThread().getName()
+                                    + " performing withdrawal task " + taskNumber
+                    );
+
+                    transactionAccount.withdraw(500);
+
+                } catch (BankException e) {
+                    System.out.println("Withdrawal failed: " + e.getMessage());
+                }
+            });
+        }
+
+// Wait for all transactions to finish
+        processor.stop();
+
+// Print final balance
+        System.out.println("Initial Balance: Rs. 100000");
+        System.out.println("Final Balance: Rs. "
+                + transactionAccount.getBalance());
+
+
+// Practical 10: Producer-Consumer
+
+        System.out.println("\n===== Producer Consumer =====");
+
+        TransactionBuffer transactionBuffer = new TransactionBuffer(3);
+
+        Account bufferAccount =
+                new SavingsAccount("Buffer Test", 10000, 2000);
+
+// Producer thread
+        Thread producer = new Thread(() -> {
+            try {
+                for (int i = 1; i <= 5; i++) {
+
+                    final int taskNumber = i;
+
+                    transactionBuffer.put(() -> {
+                        try {
+                            bufferAccount.deposit(100);
+                            System.out.println(
+                                    "Processed deposit transaction " + taskNumber
+                            );
+                        } catch (Exception e) {
+                            System.out.println("Transaction failed: " + e.getMessage());
+                        }
+                    });
+                }
+
+                // Tell consumer that no more transactions will arrive
+                transactionBuffer.put(TransactionBuffer.STOP);
+
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }, "Producer");
+
+// Consumer thread
+        Thread consumer = new Thread(() -> {
+            try {
+                while (true) {
+
+                    Runnable task = transactionBuffer.take();
+
+                    if (task == TransactionBuffer.STOP) {
+                        System.out.println("Consumer finished processing.");
+                        break;
+                    }
+
+                    task.run();
+                }
+
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }, "Consumer");
+
+        producer.start();
+        consumer.start();
+
+        try {
+            producer.join();
+            consumer.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+
         do {
             System.out.println("\n===== MiniBank Menu =====");
             System.out.println("1. Open Account");
