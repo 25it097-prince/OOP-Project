@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import exception.BankException;
 import model.Account;
 import model.SavingsAccount;
+import util.Repository;
 import service.AccountWorker;
 import service.AccountStore;
 import model.SavingsAccount;
@@ -448,6 +449,35 @@ public class MiniBank {
                     account.getOwnerName() + " - Rs. " + account.getBalance()
             );
         }
+
+        Repository<Account> accountRepository = new Repository<>();
+
+        account1 = new SavingsAccount("Prince", 15000, 2000);
+        account2 = new SavingsAccount("Parth", 5000, 2000);
+        account3 = new SavingsAccount("Yug", 10000, 2000);
+
+// Save multiple accounts
+        accountRepository.saveAll(account1, account2, account3);
+
+// Find account using ID
+        Account fetched = accountRepository.findById(
+                account1.getAccountNumber()
+        );
+
+        System.out.println("\nFetched Account:");
+        System.out.println(fetched);
+
+// Display all accounts
+        System.out.println("\nAll Repository Accounts:");
+
+        for (Account account : accountRepository.findAll()) {
+            System.out.println(account);
+        }
+
+// Test bounded generic method
+        Integer[] numbers = {10, 20, 30, 40, 50};
+
+        System.out.println("\nAverage: " + Repository.average(numbers));
 
 
         sc.close();
