@@ -2,6 +2,9 @@ package service;
 
 import model.*;
 import util.*;
+import service.AccountWorker;
+import model.Account;
+import model.SavingsAccount;
 import exception.BankException;
 import exception.InsufficientFundsException;
 import exception.InvalidAmountException;
@@ -82,7 +85,7 @@ public class MiniBank {
 
         System.out.println("\n===== Practical 8: Exception Handling =====");
 
-        Account savings = new SavingsAccount("Prince", 10000, 2000);
+        Account saving = new SavingsAccount("Prince", 10000, 2000);
         Account current = new SavingsAccount("Parth", 5000, 2000);
 
 // 1. Successful deposit
@@ -127,6 +130,50 @@ public class MiniBank {
             System.out.println("Session Error: " + e.getMessage());
         }
 
+        // Practical 9: Multithreading
+
+        System.out.println("\n===== Practical 9: Multithreading =====");
+
+// Create one shared account
+        Account sharedAccount = new SavingsAccount("Prince", 0, 2000);
+
+// Create 10 threads
+        int numberOfThreads = 10;
+        int times = 1000;
+        long amount = 10;
+
+        Thread[] threads = new Thread[numberOfThreads];
+
+// Start threads
+        for (int i = 0; i < numberOfThreads; i++) {
+
+            AccountWorker worker =
+                    new AccountWorker(sharedAccount, times, amount);
+
+            threads[i] = new Thread(worker, "BankThread-" + (i + 1));
+
+            threads[i].start();
+        }
+
+// Wait for all threads to finish
+        for (int i = 0; i < numberOfThreads; i++) {
+
+            try {
+                threads[i].join();
+
+            } catch (InterruptedException e) {
+                System.out.println("Thread interrupted: " + e.getMessage());
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+
+// Print final balance
+        System.out.println("Expected Balance: Rs. " +
+                (numberOfThreads * times * amount));
+
+        System.out.println("Actual Balance: Rs. " +
+                sharedAccount.getBalance());
         do {
             System.out.println("\n===== MiniBank Menu =====");
             System.out.println("1. Open Account");
