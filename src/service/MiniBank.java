@@ -2,6 +2,13 @@ package service;
 
 import model.*;
 import util.*;
+import exception.BankException;
+import exception.InsufficientFundsException;
+import exception.InvalidAmountException;
+import util.BankSession;
+import model.Account;
+import model.SavingsAccount;
+import util.AnnotationValidator;
 import static util.StatementFormatter.buildStatement;
 import java.util.Scanner;
 
@@ -53,6 +60,72 @@ public class MiniBank {
 // Static import testing
         System.out.println("\n===== ACCOUNT STATEMENT =====");
         System.out.println(buildStatement(savings));
+
+        // Practical 7: Annotation Validation
+
+        System.out.println("\n===== Annotation Validation =====");
+
+        Account testAccount = new SavingsAccount("Prince", -1000, 2000);
+
+        String[] errors = AnnotationValidator.validate(testAccount);
+
+        if (errors.length == 0) {
+            System.out.println("No validation errors found.");
+        } else {
+            System.out.println("Validation Errors:");
+
+            for (String error : errors) {
+                System.out.println(error);
+            }
+        }
+
+
+        System.out.println("\n===== Practical 8: Exception Handling =====");
+
+        Account savings = new SavingsAccount("Prince", 10000, 2000);
+        Account current = new SavingsAccount("Parth", 5000, 2000);
+
+// 1. Successful deposit
+        try {
+            savings.deposit(2000);
+        } catch (InvalidAmountException e) {
+            System.out.println("Deposit Error: " + e.getMessage());
+        } finally {
+            System.out.println("Deposit operation finished.");
+        }
+
+// 2. Invalid withdrawal
+        try {
+            savings.withdraw(-500);
+        } catch (InvalidAmountException e) {
+            System.out.println("Invalid Amount: " + e.getMessage());
+        } catch (InsufficientFundsException e) {
+            System.out.println("Insufficient Funds: " + e.getMessage());
+        }
+
+// 3. Insufficient balance
+        try {
+            savings.withdraw(50000);
+        } catch (InsufficientFundsException e) {
+            System.out.println("Withdrawal Error: " + e.getMessage());
+            System.out.println("Shortfall: Rs. " + e.getShortfall());
+        } catch (InvalidAmountException e) {
+            System.out.println("Invalid Amount: " + e.getMessage());
+        }
+
+// 4. Account transfer
+        try {
+            savings.transfer(current, 2000);
+        } catch (BankException e) {
+            System.out.println("Bank Error: " + e.getMessage());
+        }
+
+// 5. Try-with-resources
+        try (BankSession session = new BankSession()) {
+            System.out.println("Performing banking operations...");
+        } catch (Exception e) {
+            System.out.println("Session Error: " + e.getMessage());
+        }
 
         do {
             System.out.println("\n===== MiniBank Menu =====");
