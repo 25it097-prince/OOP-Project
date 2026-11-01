@@ -1,16 +1,12 @@
+package service;
+
+import model.*;
+import util.*;
+import static util.StatementFormatter.buildStatement;
 import java.util.Scanner;
 
 public class MiniBank {
 
-    record BankInfo(String name, String branch) {}
-
-    enum MenuOption {
-        OPEN_ACCOUNT,
-        DEPOSIT,
-        WITHDRAW,
-        TRANSFER,
-        EXIT
-    }
 
     public static void main(String[] args) {
 
@@ -21,6 +17,42 @@ public class MiniBank {
         System.out.println("----------" + bank.branch() + "----------");
 
         int choice;
+
+        // Practical 6: Interface Testing
+
+        System.out.println("\n===== INTERFACE TESTING =====");
+
+        Account savings = new SavingsAccount("Prince", 10000, 2000);
+
+        System.out.println("Interest Rate: " + savings.interestRate() + "%");
+        System.out.println("Yearly Interest: Rs. " + savings.yearlyInterest());
+
+// Anonymous class implementation
+        WithdrawRule rule1 = new WithdrawRule() {
+            @Override
+            public boolean allow(Account account, long amount) {
+                return account.canWithdraw(amount);
+            }
+        };
+
+        System.out.println("\nAnonymous Class Result: "
+                + rule1.allow(savings, 3000));
+
+// Lambda expression implementation
+        WithdrawRule rule2 = (account, amount) ->
+                account.canWithdraw(amount);
+
+        System.out.println("Lambda Result: "
+                + rule2.allow(savings, 3000));
+
+// Premium marker interface testing
+        if (savings instanceof Premium) {
+            System.out.println("This is a Premium Account.");
+        }
+
+// Static import testing
+        System.out.println("\n===== ACCOUNT STATEMENT =====");
+        System.out.println(buildStatement(savings));
 
         do {
             System.out.println("\n===== MiniBank Menu =====");

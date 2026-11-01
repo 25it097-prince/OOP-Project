@@ -1,5 +1,4 @@
-public abstract class Account {
-
+public class Account {
 
     private final String accountNumber;
     private String ownerName;
@@ -14,38 +13,30 @@ public abstract class Account {
     }
 
     public Account(String ownerName, long balance) {
-        this.accountNumber = generateAccountNumber();
         this.ownerName = ownerName;
         this.balance = balance;
-        this.active = true;
+        this.accountNumber = generateAccountNumber();
+        this.active=true;
     }
 
     public Account(String ownerName) {
-        this(ownerName, 0);
+        this(ownerName,0);
     }
 
-    public abstract double interestRate();
-
-    public abstract boolean canWithdraw(long amount);
-
-    public void deposit(long amount) {
-        if (amount > 0) {
-            balance += amount;
-            System.out.println("Deposit successful.");
-        } else {
-            System.out.println("Invalid amount.");
-        }
+    public void deposit(long amount)
+    {
+        if(amount>0)
+            balance+=amount;
     }
-
-    public boolean withdraw(long amount) {
-        if (amount > 0 && canWithdraw(amount)) {
-            balance -= amount;
-            System.out.println("Withdrawal successful.");
+    public boolean withdraw(long amount)
+    {
+        if(balance>=amount && amount>0)
+        {
+            balance-=amount;
             return true;
         }
-
-        System.out.println("Withdrawal not allowed.");
-        return false;
+        else
+            return false;
     }
 
     public String getAccountNumber() {
@@ -63,26 +54,4 @@ public abstract class Account {
     public boolean isActive() {
         return active;
     }
-
-    @Override
-    public String toString() {
-        return "Account Number: " + accountNumber +
-                "\nOwner Name: " + ownerName +
-                "\nBalance: " + balance;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Account)) return false;
-
-        Account other = (Account) obj;
-        return accountNumber.equals(other.accountNumber);
-    }
-
-    @Override
-    public int hashCode() {
-        return accountNumber.hashCode();
-    }
-
 }
