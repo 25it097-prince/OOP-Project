@@ -1,0 +1,10 @@
+===== END OF DAY REPORT =====
+
+File: transactions.log
+File Size: 88 bytes
+Last Modified: 2026-11-01T05:09:33.6004355Z
+
+===== TRANSACTION SUMMARY =====
+Total Deposits: Rs. 2000
+Total Withdrawals: Rs. 1000
+Net Transaction Amount: Rs. 1000

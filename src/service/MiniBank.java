@@ -2,6 +2,8 @@ package service;
 
 import model.*;
 import util.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import exception.BankException;
 import model.Account;
 import model.SavingsAccount;
@@ -12,9 +14,10 @@ import exception.BankException;
 import exception.InsufficientFundsException;
 import exception.InvalidAmountException;
 import util.BankSession;
-import model.Account;
-import model.SavingsAccount;
 import util.AnnotationValidator;
+import util.StatePersister;
+import util.TransactionLog;
+import util.ReportGenerator;
 import static util.StatementFormatter.buildStatement;
 import java.util.Scanner;
 
@@ -333,6 +336,61 @@ public class MiniBank {
 
         System.out.println("\nThank you for using MiniBank. Goodbye!");
 
+// Practical 11: Persistence and Reporting
+
+        System.out.println("\n===== PRACTICAL 11 =====");
+
+// Create accounts
+        Account[] accounts = {
+                new SavingsAccount("Prince", 10000, 2000),
+                new SavingsAccount("Parth", 15000, 2000)
+        };
+
+// Define file locations
+        Path dataFile = Paths.get("data", "accounts.dat");
+        Path logsFolder = Paths.get("logs");
+        Path logFile = logsFolder.resolve("transactions.log");
+        Path reportFile = Paths.get("reports", "daily-report.txt");
+
+// 1. Perform transactions and write transaction logs
+        try {
+            accounts[0].deposit(1000);
+
+            TransactionLog.append(
+                    logFile,
+                    "DEPOSIT," + accounts[0].getAccountNumber() + ",1000"
+            );
+
+            accounts[1].withdraw(500);
+
+            TransactionLog.append(
+                    logFile,
+                    "WITHDRAWAL," + accounts[1].getAccountNumber() + ",500"
+            );
+
+        } catch (Exception e) {
+            System.out.println("Transaction error: " + e.getMessage());
+        }
+
+// 2. Save all accounts
+        StatePersister.save(accounts, dataFile);
+
+// 3. Load accounts into a new array
+        Account[] loadedAccounts = StatePersister.load(dataFile);
+
+// 4. Print loaded accounts
+        System.out.println("\n===== LOADED ACCOUNTS =====");
+
+        for (Account account : loadedAccounts) {
+            System.out.println(account);
+        }
+
+// 5. Generate end-of-day report
+        System.out.println("\n===== DAILY REPORT =====");
+
+        ReportGenerator.generate(logsFolder, reportFile);
+
         sc.close();
+
     }
 }

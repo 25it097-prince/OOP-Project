@@ -1,31 +1,24 @@
 package model;
-
-public class Customer implements Cloneable {
-
+import java.io.Serializable;
+public class Customer {
+    private static final long serialVersionUID = 1L;
     private String name;
     private String email;
     private String mobile;
     private final String customerId;
-
-    private Address address;
-
-    private static long customerCounter = 100;
+    private static long customerCounter;
 
     private static String generateCustomerId() {
         customerCounter++;
         return "CUST" + customerCounter;
     }
 
-    public Customer(String name, String email, String mobile) {
+
+    public Customer(String name, String email, String mobile, String customerId) {
         this.name = name;
         this.email = email;
         this.mobile = mobile;
-        this.customerId = generateCustomerId();
-    }
-
-    public Customer(String name, String email, String mobile, Address address) {
-        this(name, email, mobile);
-        this.address = address;
+        this.customerId = customerId;
     }
 
     public String getName() {
@@ -42,43 +35,5 @@ public class Customer implements Cloneable {
 
     public String getCustomerId() {
         return customerId;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public static class Address {
-
-        private String line;
-        private String city;
-        private String pincode;
-
-        public Address(String line, String city, String pincode) {
-            this.line = line;
-            this.city = city;
-            this.pincode = pincode;
-        }
-
-        public String getLine() {
-            return line;
-        }
-
-        public String getCity() {
-            return city;
-        }
-
-        public String getPincode() {
-            return pincode;
-        }
-    }
-
-    @Override
-    public Customer clone() {
-        try {
-            return (Customer) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError(e);
-        }
     }
 }
